@@ -111,7 +111,7 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
         # doc = SimpleDocTemplate(buffer, pagesize=letter)
 
         doc = BaseDocTemplate(
-            buffer, 
+            buffer,
             pagesize=letter,
             topMargin=1.25*inch,  # Increased top margin to make room for header
             bottomMargin=0.75*inch,
@@ -120,9 +120,9 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
         )
         # Define a frame for the page content
         content_frame = Frame(
-            doc.leftMargin, 
-            doc.bottomMargin, 
-            doc.width, 
+            doc.leftMargin,
+            doc.bottomMargin,
+            doc.width,
             doc.height - 0.5*inch,  # Adjust height to account for header
             id='content'
         )
@@ -132,7 +132,7 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
             frames=content_frame,
             onPage=utils.add_header
         )
-        
+
         # Add the template to the document
         doc.addPageTemplates(template)
 
@@ -148,7 +148,6 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
             spaceAfter=0.3*inch
         )
 
-
         # Section style
         section_style = ParagraphStyle(
             'Section',
@@ -158,13 +157,22 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
             spaceAfter=0.1*inch
         )
 
+        explanation_style = ParagraphStyle(
+            'ExplanationText',
+            parent=styles['Normal'],
+            spaceBefore=0.1*inch,
+            spaceAfter=0.2*inch,
+            alignment=4  # 4 is for fully justified text
+        )
+
         # Add title and header
         elements.append(
             Paragraph(f"Evaluación Docente: {docente}", title_style))
 
         elements.append(Spacer(1, 0.25*inch))
         for (teacher, asignatura), row in docente_data.iterrows():
-            docente_asignatura_data = data[(data['DOCENTE'] == docente) & (data['ASIGNATURA'] == asignatura)]
+            docente_asignatura_data = data[(data['DOCENTE'] == docente) & (
+                data['ASIGNATURA'] == asignatura)]
             num_responses = len(docente_asignatura_data)
 
             elements.append(Paragraph(
@@ -184,7 +192,7 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
             "los métodos de enseñanza. "
             "Le invitamos a tomar este reporte con una actitud abierta y positiva, viéndolo como una oportunidad para reflexionar "
             "sobre su práctica docente y potenciar aún más su impacto en la formación de los estudiantes.",
-            styles['Normal']
+            explanation_style
         ))
 
         elements.append(Spacer(1, 0.1*inch))
@@ -298,7 +306,7 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
                 "Asimismo, es importante considerar que las respuestas con la opción \"Desconozco\" pueden deberse a que algunos estudiantes no asistieron "
                 "a las primeras clases o no recuerdan este momento específico. Esto no implica necesariamente que el plan no se haya presentado, "
                 "pero resalta la importancia de reforzar esta información en distintos momentos del semestre.",
-                ParagraphStyle('ExplanationText', parent=styles['Normal'], spaceBefore=0.1*inch, spaceAfter=0.2*inch)
+                explanation_style
             ))
 
             docente_asignatura_data = data[(data['DOCENTE'] == docente) &
@@ -339,24 +347,33 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
             elements.append(Paragraph(
                 "El Desempeño Docente es un aspecto clave en la calidad del proceso de enseñanza-aprendizaje, ya que impacta directamente en la experiencia académica de los estudiantes. "
                 "Este criterio abarca diversos factores que contribuyen a un entorno educativo efectivo y enriquecedor, entre ellos:",
-                ParagraphStyle('ExplanationText', parent=styles['Normal'], spaceBefore=0.1*inch, spaceAfter=0.1*inch)
+                explanation_style
             ))
-            
+
             # Add bullet points for the factors
-            bullet_style = ParagraphStyle('BulletStyle', parent=styles['Normal'], leftIndent=20, spaceBefore=0.05*inch)
-            
-            elements.append(Paragraph("• <b>Puntualidad y cumplimiento de horario:</b> Asistencia y respeto por los tiempos establecidos.", bullet_style))
-            elements.append(Paragraph("• <b>Ambiente de respeto y cordialidad:</b> Clima de confianza y trato adecuado hacia los estudiantes.", bullet_style))
-            elements.append(Paragraph("• <b>Disponibilidad para resolver dudas:</b> Disposición para atender inquietudes y facilitar la comprensión de los temas.", bullet_style))
-            elements.append(Paragraph("• <b>Organización y estructura de la clase:</b> Desarrollo ordenado y secuencial de los contenidos.", bullet_style))
-            elements.append(Paragraph("• <b>Aplicación de estrategias didácticas:</b> Uso de metodologías adecuadas para facilitar el aprendizaje.", bullet_style))
-            elements.append(Paragraph("• <b>Claridad en la enseñanza:</b> Explicaciones comprensibles y coherentes.", bullet_style))
-            elements.append(Paragraph("• <b>Asignación de tareas y actividades académicas:</b> Diseño de actividades que refuercen los aprendizajes.", bullet_style))
-            elements.append(Paragraph("• <b>Calidad de la retroalimentación:</b> Comentarios oportunos y pertinentes para la mejora del desempeño estudiantil.", bullet_style))
-            
+            bullet_style = ParagraphStyle(
+                'BulletStyle', parent=styles['Normal'], leftIndent=20, spaceBefore=0.05*inch)
+
+            elements.append(Paragraph(
+                "• <b>Puntualidad y cumplimiento de horario:</b> Asistencia y respeto por los tiempos establecidos.", bullet_style))
+            elements.append(Paragraph(
+                "• <b>Ambiente de respeto y cordialidad:</b> Clima de confianza y trato adecuado hacia los estudiantes.", bullet_style))
+            elements.append(Paragraph(
+                "• <b>Disponibilidad para resolver dudas:</b> Disposición para atender inquietudes y facilitar la comprensión de los temas.", bullet_style))
+            elements.append(Paragraph(
+                "• <b>Organización y estructura de la clase:</b> Desarrollo ordenado y secuencial de los contenidos.", bullet_style))
+            elements.append(Paragraph(
+                "• <b>Aplicación de estrategias didácticas:</b> Uso de metodologías adecuadas para facilitar el aprendizaje.", bullet_style))
+            elements.append(Paragraph(
+                "• <b>Claridad en la enseñanza:</b> Explicaciones comprensibles y coherentes.", bullet_style))
+            elements.append(Paragraph(
+                "• <b>Asignación de tareas y actividades académicas:</b> Diseño de actividades que refuercen los aprendizajes.", bullet_style))
+            elements.append(Paragraph(
+                "• <b>Calidad de la retroalimentación:</b> Comentarios oportunos y pertinentes para la mejora del desempeño estudiantil.", bullet_style))
+
             elements.append(Paragraph(
                 "A continuación, se detallan los resultados obtenidos en cada uno de estos criterios.",
-                ParagraphStyle('ExplanationText', parent=styles['Normal'], spaceBefore=0.1*inch, spaceAfter=0.2*inch)
+                explanation_style
             ))
 
             ratings = row.unstack()
@@ -389,15 +406,15 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
 
             elements.append(
                 Paragraph("Evaluación General del Desempeño Docente", section_style))
-            
+
             elements.append(Paragraph(
-                    "La percepción de los estudiantes sobre el desempeño docente es un indicador importante de la calidad del proceso de enseñanza-aprendizaje. "
-                    "A través de este indicador, se busca conocer de manera global cómo valoran la labor del docente en función de su metodología, "
-                    "interacción con los estudiantes y claridad en la enseñanza. "
-                    "Las respuestas obtenidas reflejan el impacto del docente en la experiencia académica y permiten identificar fortalezas, "
-                    "así como oportunidades de mejora. A continuación, se presentan los resultados de esta valoración general.",
-                    ParagraphStyle('ExplanationText', parent=styles['Normal'], spaceBefore=0.1*inch, spaceAfter=0.2*inch)
-                ))
+                "La percepción de los estudiantes sobre el desempeño docente es un indicador importante de la calidad del proceso de enseñanza-aprendizaje. "
+                "A través de este indicador, se busca conocer de manera global cómo valoran la labor del docente en función de su metodología, "
+                "interacción con los estudiantes y claridad en la enseñanza. "
+                "Las respuestas obtenidas reflejan el impacto del docente en la experiencia académica y permiten identificar fortalezas, "
+                "así como oportunidades de mejora. A continuación, se presentan los resultados de esta valoración general.",
+                explanation_style
+            ))
 
             # Filter the original data for this docente and asignatura
             docente_asignatura_data = data[(data['DOCENTE'] == docente) & (
@@ -499,8 +516,7 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
 
                                     elements.append(Paragraph(
                                         formatted_html,
-                                        ParagraphStyle(
-                                            'LevelStyle', parent=styles['Normal'], spaceAfter=10, leftIndent=10)
+                                        explanation_style
                                     ))
 
                                 else:
@@ -533,51 +549,53 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
 
             elements.append(Spacer(1, 0.2*inch))
 
-                # Add signature section with space for signatures
+            # Add signature section with space for signatures
         elements.append(Spacer(1, 1*inch))  # Space for signatures
 
         # Try to load signature images
         vany_signature_path = "./signature/vany_signature.png"
         patricia_signature_path = "./signature/patricia_signature.jpeg"
-        
+
         # Check if signature images exist - if not, use default signatures (lines)
         has_vany_signature = os.path.exists(vany_signature_path)
         has_patricia_signature = os.path.exists(patricia_signature_path)
-        
+
         # Create a 2x2 table for signatures with images
         if has_vany_signature or has_patricia_signature:
             # If we have at least one signature image
             signature_data = []
-            
+
             # First row with images or lines
             signature_row1 = []
-            
+
             # For Vany's signature
             if has_vany_signature:
                 # Create an Image object for the signature
-                vany_img = Image(vany_signature_path, width=2*inch, height=0.75*inch)
+                vany_img = Image(vany_signature_path,
+                                 width=2*inch, height=0.75*inch)
                 vany_img.hAlign = 'CENTER'
                 signature_row1.append(vany_img)
             else:
                 signature_row1.append('________________________')
-                
+
             # For Patricia's signature
             if has_patricia_signature:
                 # Create an Image object for the signature
-                patricia_img = Image(patricia_signature_path, width=2*inch, height=0.75*inch)
+                patricia_img = Image(
+                    patricia_signature_path, width=2*inch, height=0.75*inch)
                 patricia_img.hAlign = 'CENTER'
                 signature_row1.append(patricia_img)
             else:
                 signature_row1.append('________________________')
-                
+
             signature_data.append(signature_row1)
-            
+
             # Second row with names and titles
             signature_data.append([
                 '\nLic. Vany Rosales \nEncargada de Calidad Academica',
                 'VoBo Lic. Patricia Cabrera\nJefe del Departamento de Diseño Curricular y \nCalidad Académica a.i.'
             ])
-            
+
         else:
             # Default behavior (just lines + text)
             signature_data = [
@@ -585,18 +603,20 @@ def generate_pdf_with_reportlab(data, docente, docente_data):
                 ['\nLic. Vany Rosales \nEncargada de Calidad Academica',
                  'VoBo Lic. Patricia Cabrera\nJefe del Departamento de Diseño Curricular y \nCalidad Académica a.i.']
             ]
-        
+
         # Create and style the signature table
-        signature_table = Table(signature_data, colWidths=[2.75*inch, 2.75*inch])
-        
+        signature_table = Table(signature_data, colWidths=[
+                                2.75*inch, 2.75*inch])
+
         # Apply styling to the table
         table_style = [
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, 0), 'BOTTOM'),  # Align images at bottom
             ('FONTNAME', (0, 1), (-1, 1), 'Helvetica-Bold'),
-            ('TOPPADDING', (0, 1), (-1, 1), 10),  # Add padding between image and text
+            # Add padding between image and text
+            ('TOPPADDING', (0, 1), (-1, 1), 10),
         ]
-        
+
         signature_table.setStyle(TableStyle(table_style))
         elements.append(signature_table)
 
