@@ -147,14 +147,22 @@ def markdown_to_reportlab_html(markdown_text):
 def add_header(canvas, doc):
     """Add UCB logo header to each page of the PDF report"""
     canvas.saveState()
-    
+
     # Add UCB logo on the top left
     logo_path = "./logo/logo.png"
 
-    
     if os.path.exists(logo_path):
         # Draw logo at top left, preserve aspect ratio
-        canvas.drawImage(logo_path, 0.8*inch, doc.height + 0.5*inch, 
-                       width=1.5*inch, height=0.7*inch, preserveAspectRatio=True, mask='auto')
-    
+        canvas.drawImage(logo_path, 0.8*inch, doc.height + 0.5*inch,
+                         width=1.5*inch, height=0.7*inch, preserveAspectRatio=True, mask='auto')
+
+    # Add department text on the top right
+    canvas.setFont('Helvetica-Bold', 10)
+    canvas.drawRightString(doc.width + 0.5*inch, doc.height + 0.9*inch,
+                           "Dirección Académica de Sede")
+
+    canvas.setFont('Helvetica', 9)
+    canvas.drawRightString(doc.width + 0.5*inch, doc.height + 0.7*inch,
+                           "Departamento de Desarrollo Curricular y Calidad Académica")
+
     canvas.restoreState()
