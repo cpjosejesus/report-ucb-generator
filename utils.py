@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 import markdown
+from reportlab.lib.units import inch
+
 # Add a variable to store the latest data
 _latest_data = None
 
@@ -140,3 +142,19 @@ def markdown_to_reportlab_html(markdown_text):
         html = html[:-5]
 
     return html
+
+
+def add_header(canvas, doc):
+    """Add UCB logo header to each page of the PDF report"""
+    canvas.saveState()
+    
+    # Add UCB logo on the top left
+    logo_path = "./logo/logo.png"
+
+    
+    if os.path.exists(logo_path):
+        # Draw logo at top left, preserve aspect ratio
+        canvas.drawImage(logo_path, 0.8*inch, doc.height + 0.5*inch, 
+                       width=1.5*inch, height=0.7*inch, preserveAspectRatio=True, mask='auto')
+    
+    canvas.restoreState()
