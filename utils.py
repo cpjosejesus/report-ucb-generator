@@ -1,6 +1,12 @@
 import pandas as pd
 import os
 import markdown
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 # Add a variable to store the latest data
 _latest_data = None
 
@@ -140,3 +146,55 @@ def markdown_to_reportlab_html(markdown_text):
         html = html[:-5]
 
     return html
+
+
+def generate_ai_summary(docente, asignatura, comentarios_text):
+    """
+    Generate an AI summary of student comments using OpenAI's GPT-4o-mini model.
+
+    Parameters:
+    -----------
+    docente : str
+        Teacher name
+    asignatura : str
+        Subject name
+    comentarios_text : str
+        Text of comments to summarize
+
+    Returns:
+    --------
+    tuple
+        (success: bool, summary: str or error message: str)
+    """
+
+    try:
+        # Initialize OpenAI client
+        client = OpenAI(api_key=OPENAI_API_KEY)
+
+        prompt = f"""
+        Eres un asistente encargado de analizar comentarios de estudiantes sobre profesores y asignaturas.
+        Tu tarea es leer los siguientes comentarios y generar un resumen conciso de los puntos clave mencionados.
+
+        **Instrucción Importante: La respuesta DEBE estar escrita exclusivamente en español.**
+
+        Comentarios de los estudiantes para el docente {docente} en la asignatura {asignatura}:
+        {comentarios_text}
+
+        Resumen de los comentarios de los estudiantes sobre el docente para la asignatura:
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Eres un asistente especializado en análisis de comentarios de evaluaciones docentes. Tus respuestas deben ser en español, concisas y enfocadas en extraer patrones relevantes."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.1
+        )
+
+        # Get the response content
+        summary = response.choices[0].message.content
+        return True, summary
+
+    except Exception as e:
+        return False, f"Error calling OpenAI API: {str(e)}"
